@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { usePathname } from "next/navigation";
 import {
   GraduationCap,
   ShieldCheck,
@@ -12,9 +13,16 @@ import {
 } from "lucide-react";
 
 export default function Footer() {
+  const pathname = usePathname();
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  // Dashboards have their own specialized view
+  if (pathname?.startsWith("/admin") || pathname?.startsWith("/student")) {
+    return null;
+  }
 
   return (
     <footer className="w-full bg-slate-950 text-slate-300 relative overflow-hidden pt-12 sm:pt-16 lg:pt-20 border-t border-slate-800">

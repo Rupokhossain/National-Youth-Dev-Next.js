@@ -21,8 +21,10 @@ import {
   Award,
 } from "lucide-react";
 import { galleryItems, GalleryItem } from "@/lib/galleryData";
+import { useInstitute } from "@/context/InstituteContext";
 
 export default function GalleryPage() {
+  const { gallery } = useInstitute();
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [activeModalIndex, setActiveModalIndex] = useState<number | null>(null);
 
@@ -36,8 +38,8 @@ export default function GalleryPage() {
 
   const filteredItems =
     selectedCategory === "all"
-      ? galleryItems
-      : galleryItems.filter((item) => item.category === selectedCategory);
+      ? gallery
+      : gallery.filter((item) => item.category === selectedCategory);
 
   // Keyboard navigation for lightbox modal
   useEffect(() => {
@@ -107,8 +109,8 @@ export default function GalleryPage() {
           {categories.map((cat) => {
             const count =
               cat.key === "all"
-                ? galleryItems.length
-                : galleryItems.filter((i) => i.category === cat.key).length;
+                ? gallery.length
+                : gallery.filter((i) => i.category === cat.key).length;
             const isActive = selectedCategory === cat.key;
             return (
               <button

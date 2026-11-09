@@ -6,7 +6,6 @@ import Link from "next/link";
 import {
   UserPlus,
   GraduationCap,
-  Building2,
   Lock,
   User,
   Phone,
@@ -15,12 +14,14 @@ import {
   CheckCircle2,
   ShieldCheck,
   ArrowRight,
-  Sparkles,
   BookOpen,
+  Award,
+  Sparkles,
 } from "lucide-react";
+import { useInstitute } from "@/context/InstituteContext";
 
 export default function RegisterPage() {
-  const [accountType, setAccountType] = useState<"student" | "branch">("student");
+  const { addAdmission } = useInstitute();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
@@ -36,35 +37,20 @@ export default function RegisterPage() {
     agreeTerms: true,
   });
 
-  // Branch Form State
-  const [branchForm, setBranchForm] = useState({
-    centerName: "",
-    directorName: "",
-    phone: "",
-    email: "",
-    district: "Dhaka",
-    labCapacity: "20+ Workstations",
-    password: "",
-    confirmPassword: "",
-    agreeTerms: true,
-  });
-
   const handleStudentSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    addAdmission({
+      fullName: studentForm.fullName,
+      phone: studentForm.phone,
+      email: studentForm.email || `${studentForm.phone}@student.jubounnayon.com`,
+      trade: studentForm.trade,
+      district: studentForm.district,
+    });
     setTimeout(() => {
       setIsSubmitting(false);
       setIsSuccess(true);
-    }, 600);
-  };
-
-  const handleBranchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setIsSuccess(true);
-    }, 600);
+    }, 450);
   };
 
   return (
@@ -77,13 +63,13 @@ export default function RegisterPage() {
         <div className="relative z-10 max-w-[1240px] mx-auto px-6 text-center space-y-3">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold tracking-wide">
             <UserPlus className="w-4 h-4 text-emerald-400" />
-            <span>National Trainee Enrollment & Branch Licensing</span>
+            <span>National Trainee Enrollment (Session 2026)</span>
           </div>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white">
-            Create Your Official Account
+            Student Registration Portal
           </h1>
           <p className="text-sm sm:text-base text-slate-300 max-w-2xl mx-auto font-normal">
-            Register as a new trainee for subsidized technical training or submit an institutional application to affiliate your training center.
+            Enroll in government subsidized technical trade courses, build high-demand vocational skills, and receive nationally certified credentials.
           </p>
         </div>
       </section>
@@ -92,80 +78,44 @@ export default function RegisterPage() {
       <main className="max-w-[1120px] mx-auto w-full px-4 sm:px-8 py-10 sm:py-14 relative z-20">
         <div className="bg-white rounded-3xl shadow-xl border border-slate-200/90 overflow-hidden grid grid-cols-1 lg:grid-cols-12">
           
-          {/* Left Column: Form (7 cols) */}
+          {/* Left Column: Student Registration Form (7 cols) */}
           <div className="lg:col-span-7 p-6 sm:p-10 space-y-6">
             
-            {/* Account Type Tabs */}
-            <div className="grid grid-cols-2 bg-slate-100 p-1.5 rounded-2xl gap-1.5 border border-slate-200">
-              <button
-                type="button"
-                onClick={() => {
-                  setAccountType("student");
-                  setIsSuccess(false);
-                }}
-                className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold text-xs sm:text-sm transition ${
-                  accountType === "student"
-                    ? "bg-white text-emerald-700 shadow-sm border border-slate-200/80"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                <GraduationCap className="w-4 h-4 text-emerald-600" />
-                <span>New Trainee Enrollment</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setAccountType("branch");
-                  setIsSuccess(false);
-                }}
-                className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold text-xs sm:text-sm transition ${
-                  accountType === "branch"
-                    ? "bg-white text-emerald-700 shadow-sm border border-slate-200/80"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                <Building2 className="w-4 h-4 text-emerald-600" />
-                <span>Branch Center Affiliation</span>
-              </button>
-            </div>
-
-            {/* Title */}
-            <div className="space-y-1">
-              <h2 className="text-2xl font-black text-slate-900">
-                {accountType === "student"
-                  ? "Trainee Registration (Session 2026)"
-                  : "Branch Center Affiliation Request"}
-              </h2>
-              <p className="text-xs sm:text-sm text-slate-500 font-normal">
-                {accountType === "student"
-                  ? "Enroll in certified vocational courses across 64 district technical hubs."
-                  : "Apply for official accreditation under Saikat Computer & Training Jubo Songhoton."}
-              </p>
+            {/* Header Badge */}
+            <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-700 flex items-center justify-center font-bold shrink-0">
+                <GraduationCap className="w-6 h-6" />
+              </div>
+              <div className="space-y-0.5">
+                <h2 className="text-2xl font-black text-slate-900">
+                  New Trainee Registration
+                </h2>
+                <p className="text-xs sm:text-sm text-slate-500 font-normal">
+                  Create your student profile to access classes, course materials, and certified marksheet.
+                </p>
+              </div>
             </div>
 
             {isSuccess ? (
               <div className="bg-emerald-50 border border-emerald-300 rounded-2xl p-7 text-center space-y-3 animate-fadeIn">
                 <CheckCircle2 className="w-14 h-14 text-emerald-600 mx-auto" />
                 <h3 className="font-extrabold text-slate-900 text-xl">
-                  Registration Received Successfully!
+                  Registration Successful!
                 </h3>
                 <p className="text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
-                  {accountType === "student"
-                    ? "Your trainee profile has been initiated. You can now log in using your registered mobile number or email."
-                    : "Your branch center licensing request has been queued for quality inspection. Our Directorate will contact you within 48 hours."}
+                  Welcome to National Youth Development Institute! Your trainee registration has been recorded. You can now log into your student dashboard with your registered mobile number or email and password.
                 </p>
                 <div className="pt-3">
                   <Link
-                    href="/login"
+                    href="/login?role=student"
                     className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-slate-900 text-white font-extrabold text-sm hover:bg-slate-800 transition shadow-md"
                   >
-                    <span>Proceed to Sign In</span>
+                    <span>Proceed to Student Login</span>
                     <ArrowRight className="w-4 h-4" />
                   </Link>
                 </div>
               </div>
-            ) : accountType === "student" ? (
+            ) : (
               /* Student Registration Form */
               <form onSubmit={handleStudentSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -301,135 +251,10 @@ export default function RegisterPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full mt-2 py-4 px-6 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm sm:text-base flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/25 hover:shadow-xl transition-all disabled:opacity-75"
+                  className="w-full mt-2 py-4 px-6 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm sm:text-base flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/25 hover:shadow-xl transition-all disabled:opacity-75 cursor-pointer"
                 >
                   <UserPlus className="w-4 h-4" />
                   <span>{isSubmitting ? "Submitting Registration..." : "Create Trainee Account"}</span>
-                </button>
-              </form>
-            ) : (
-              /* Branch Registration Form */
-              <form onSubmit={handleBranchSubmit} className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <label className="block text-xs font-bold text-slate-800 uppercase tracking-wide">
-                      Institute / Center Name *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={branchForm.centerName}
-                      onChange={(e) => setBranchForm({ ...branchForm, centerName: e.target.value })}
-                      placeholder="e.g. Apex IT & Technical Center"
-                      className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-300 text-slate-900 font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white text-sm transition"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="block text-xs font-bold text-slate-800 uppercase tracking-wide">
-                      Director / Principal Name *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={branchForm.directorName}
-                      onChange={(e) => setBranchForm({ ...branchForm, directorName: e.target.value })}
-                      placeholder="e.g. Engr. Rafiqul Islam"
-                      className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-300 text-slate-900 font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white text-sm transition"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <label className="block text-xs font-bold text-slate-800 uppercase tracking-wide">
-                      Official Phone *
-                    </label>
-                    <input
-                      type="tel"
-                      required
-                      value={branchForm.phone}
-                      onChange={(e) => setBranchForm({ ...branchForm, phone: e.target.value })}
-                      placeholder="018XX-XXXXXX"
-                      className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-300 text-slate-900 font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white text-sm transition"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="block text-xs font-bold text-slate-800 uppercase tracking-wide">
-                      Center District *
-                    </label>
-                    <select
-                      value={branchForm.district}
-                      onChange={(e) => setBranchForm({ ...branchForm, district: e.target.value })}
-                      className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-300 text-slate-900 font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white text-sm transition"
-                    >
-                      <option value="Dhaka">Dhaka</option>
-                      <option value="Chattogram">Chattogram</option>
-                      <option value="Gazipur">Gazipur</option>
-                      <option value="Bogura">Bogura</option>
-                      <option value="Sylhet">Sylhet</option>
-                      <option value="Rajshahi">Rajshahi</option>
-                      <option value="Khulna">Khulna</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="block text-xs font-bold text-slate-800 uppercase tracking-wide">
-                    Existing Practical Lab Facilities *
-                  </label>
-                  <select
-                    value={branchForm.labCapacity}
-                    onChange={(e) => setBranchForm({ ...branchForm, labCapacity: e.target.value })}
-                    className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-300 text-slate-900 font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white text-sm transition"
-                  >
-                    <option value="20+ Workstations">Computer Lab (20+ Dedicated Workstations)</option>
-                    <option value="Electrical Workshop">Electrical & Motor Winding Lab Workshop</option>
-                    <option value="Apparel Workshop">Industrial Sewing & Tailoring Lab</option>
-                    <option value="Multi-disciplinary">Multi-disciplinary Technical Trade Facilities</option>
-                  </select>
-                </div>
-
-                {/* Password & Confirm */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <label className="block text-xs font-bold text-slate-800 uppercase tracking-wide">
-                      Administrative Password *
-                    </label>
-                    <input
-                      type="password"
-                      required
-                      placeholder="Create security key"
-                      value={branchForm.password}
-                      onChange={(e) => setBranchForm({ ...branchForm, password: e.target.value })}
-                      className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-300 text-slate-900 font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white text-sm transition"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="block text-xs font-bold text-slate-800 uppercase tracking-wide">
-                      Confirm Password *
-                    </label>
-                    <input
-                      type="password"
-                      required
-                      placeholder="Repeat security key"
-                      value={branchForm.confirmPassword}
-                      onChange={(e) => setBranchForm({ ...branchForm, confirmPassword: e.target.value })}
-                      className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-300 text-slate-900 font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white text-sm transition"
-                    />
-                  </div>
-                </div>
-
-                {/* Submit */}
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full mt-2 py-4 px-6 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm sm:text-base flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/25 hover:shadow-xl transition-all disabled:opacity-75"
-                >
-                  <Building2 className="w-4 h-4" />
-                  <span>{isSubmitting ? "Submitting Application..." : "Submit Branch Affiliation Request"}</span>
                 </button>
               </form>
             )}
@@ -455,7 +280,7 @@ export default function RegisterPage() {
                 <ShieldCheck className="w-6 h-6" />
               </div>
               <h3 className="text-xl sm:text-2xl font-black text-white leading-snug">
-                Why Join Our National Network?
+                Trainee Benefits & Certification
               </h3>
               <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
                 Affiliated with Saikat Computer & Training Jubo Songhoton • Govt. Reg: 04.30.2600. Providing certified pathways for Bangladesh's youth workforce.
@@ -469,7 +294,7 @@ export default function RegisterPage() {
                 </div>
                 <div className="flex items-start gap-2.5">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <span>Direct eligibility for government youth entrepreneurship loan schemes</span>
+                  <span>Government youth entrepreneurship & self-employment guidance</span>
                 </div>
                 <div className="flex items-start gap-2.5">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
@@ -477,7 +302,7 @@ export default function RegisterPage() {
                 </div>
                 <div className="flex items-start gap-2.5">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <span>Job placement cell with corporate partnerships across 64 districts</span>
+                  <span>100% practical lab assignments with experienced certified trainers</span>
                 </div>
               </div>
             </div>

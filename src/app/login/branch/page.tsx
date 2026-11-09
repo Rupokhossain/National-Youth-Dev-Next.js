@@ -2,5 +2,5 @@
 import { redirect } from "next/navigation";
 
 export default function BranchLoginPage() {
-  redirect("/login?role=branch");
+  redirect("/login");
 }

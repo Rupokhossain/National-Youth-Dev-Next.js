@@ -4,6 +4,7 @@ import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import { coursesData, Course } from "@/lib/coursesData";
 import CourseThumbnail from "@/components/public/CourseThumbnail";
+import { useInstitute } from "@/context/InstituteContext";
 import {
   Search,
   Filter,
@@ -23,6 +24,7 @@ import {
 } from "lucide-react";
 
 export default function CoursesPage() {
+  const { courses } = useInstitute();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedDuration, setSelectedDuration] = useState("all");
@@ -33,7 +35,7 @@ export default function CoursesPage() {
   // Dynamically extract unique categories with count
   const categories = useMemo(() => {
     const map = new Map<string, { label: string; count: number }>();
-    coursesData.forEach((course) => {
+    courses.forEach((course) => {
       const existing = map.get(course.categorySlug);
       if (existing) {
         existing.count += 1;
@@ -46,18 +48,18 @@ export default function CoursesPage() {
     });
 
     return [
-      { slug: "all", label: "All Programs", count: coursesData.length },
+      { slug: "all", label: "All Programs", count: courses.length },
       ...Array.from(map.entries()).map(([slug, data]) => ({
         slug,
         label: data.label,
         count: data.count,
       })),
     ];
-  }, []);
+  }, [courses]);
 
   // Filter & Sort Logic
   const filteredCourses = useMemo(() => {
-    let result = coursesData.filter((course) => {
+    let result = courses.filter((course) => {
       // Search query check
       if (searchQuery.trim()) {
         const query = searchQuery.toLowerCase();
