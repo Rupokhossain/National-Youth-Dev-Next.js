@@ -3,38 +3,40 @@
 
 import React, { useState, Suspense } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   LogIn,
   GraduationCap,
-  Building2,
+  Shield,
+  ShieldCheck,
   Lock,
   User,
-  ShieldCheck,
   Eye,
   EyeOff,
   ArrowRight,
   CheckCircle2,
   Sparkles,
-  HelpCircle,
   KeyRound,
-  FileText,
+  Mail,
+  Zap,
 } from "lucide-react";
 
 function LoginForm() {
+  const router = useRouter();
   const searchParams = useSearchParams();
-  const initialRole = searchParams.get("role") === "branch" ? "branch" : "student";
-  const [role, setRole] = useState<"student" | "branch">(initialRole);
+  const initialRole = searchParams.get("role") === "admin" ? "admin" : "student";
+  const [role, setRole] = useState<"student" | "admin">(initialRole);
 
   const [showPassword, setShowPassword] = useState(false);
-  const [identifier, setIdentifier] = useState(role === "student" ? "NYD-2026-1042" : "C-0104");
-  const [password, setPassword] = useState("••••••••");
+  const [identifier, setIdentifier] = useState(role === "student" ? "NYD-2026-1042" : "admin@jubounnayon.com");
+  const [password, setPassword] = useState("admin123");
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  const handleRoleSwitch = (newRole: "student" | "branch") => {
+  const handleRoleSwitch = (newRole: "student" | "admin") => {
     setRole(newRole);
-    setIdentifier(newRole === "student" ? "NYD-2026-1042" : "C-0104");
+    setIdentifier(newRole === "student" ? "NYD-2026-1042" : "admin@jubounnayon.com");
+    setPassword(newRole === "student" ? "student123" : "admin123");
     setIsSuccess(false);
   };
 
@@ -44,7 +46,15 @@ function LoginForm() {
     setTimeout(() => {
       setIsLoading(false);
       setIsSuccess(true);
-    }, 600);
+      // Auto redirect to appropriate dashboard after short delay
+      setTimeout(() => {
+        if (role === "admin") {
+          router.push("/admin");
+        } else {
+          router.push("/student");
+        }
+      }, 700);
+    }, 500);
   };
 
   return (
@@ -57,13 +67,13 @@ function LoginForm() {
         <div className="relative z-10 max-w-[1240px] mx-auto px-6 text-center space-y-3">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold tracking-wide">
             <ShieldCheck className="w-4 h-4 text-emerald-400" />
-            <span>Official Identity & Access Gateway</span>
+            <span>National Platform Authentication Gateway</span>
           </div>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white">
-            Portal Access & Authentication
+            Portal Access & Login
           </h1>
           <p className="text-sm sm:text-base text-slate-300 max-w-2xl mx-auto font-normal">
-            Sign in to your authorized student dashboard or regional branch center management system.
+            Sign in to access your personalized Student Learning Dashboard or Central Directorate Admin Control Center.
           </p>
         </div>
       </section>
@@ -75,12 +85,12 @@ function LoginForm() {
           {/* Left Column: Form (7 cols) */}
           <div className="lg:col-span-7 p-6 sm:p-10 space-y-6">
             
-            {/* Role Switcher Tabs */}
+            {/* Role Switcher Tabs (2 Tabs: Student vs Admin) */}
             <div className="grid grid-cols-2 bg-slate-100 p-1.5 rounded-2xl gap-1.5 border border-slate-200">
               <button
                 type="button"
                 onClick={() => handleRoleSwitch("student")}
-                className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold text-xs sm:text-sm transition ${
+                className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold text-xs sm:text-sm transition cursor-pointer ${
                   role === "student"
                     ? "bg-white text-emerald-700 shadow-sm border border-slate-200/80"
                     : "text-slate-600 hover:text-slate-900"
@@ -92,28 +102,51 @@ function LoginForm() {
 
               <button
                 type="button"
-                onClick={() => handleRoleSwitch("branch")}
-                className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold text-xs sm:text-sm transition ${
-                  role === "branch"
+                onClick={() => handleRoleSwitch("admin")}
+                className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold text-xs sm:text-sm transition cursor-pointer ${
+                  role === "admin"
                     ? "bg-white text-emerald-700 shadow-sm border border-slate-200/80"
                     : "text-slate-600 hover:text-slate-900"
                 }`}
               >
-                <Building2 className="w-4 h-4 text-emerald-600" />
-                <span>Branch Institute</span>
+                <Shield className="w-4 h-4 text-emerald-600" />
+                <span>Central Admin</span>
               </button>
             </div>
 
             {/* Login Box Title */}
             <div className="space-y-1">
               <h2 className="text-2xl font-black text-slate-900">
-                {role === "student" ? "Trainee Portal Login" : "Branch Center Management"}
+                {role === "student" ? "Trainee Portal Login" : "Central Admin Directorate"}
               </h2>
               <p className="text-xs sm:text-sm text-slate-500 font-normal">
                 {role === "student"
-                  ? "Enter your Roll, Registration Number or email to access your admit card, syllabus, and results."
-                  : "Enter your assigned Branch Center Code and administrative secret key."}
+                  ? "Enter your Roll, Registration Number or email to access your enrolled courses, syllabus, and marksheet."
+                  : "Enter your official administrative email or ID and security password to manage institute operations."}
               </p>
+            </div>
+
+            {/* Quick Demo Credentials Autofill Banner */}
+            <div className="p-3 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-between text-xs">
+              <div className="flex items-center gap-2 text-slate-600">
+                <Zap className="w-3.5 h-3.5 text-amber-500" />
+                <span><strong>Demo:</strong> {role === "student" ? "NYD-2026-1042" : "admin@jubounnayon.com"}</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  if (role === "student") {
+                    setIdentifier("NYD-2026-1042");
+                    setPassword("student123");
+                  } else {
+                    setIdentifier("admin@jubounnayon.com");
+                    setPassword("admin123");
+                  }
+                }}
+                className="text-emerald-700 font-bold hover:underline"
+              >
+                Autofill Credentials
+              </button>
             </div>
 
             {isSuccess ? (
@@ -123,15 +156,15 @@ function LoginForm() {
                   Authenticated Successfully!
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-600">
-                  Redirecting to your authorized dashboard session for{" "}
+                  Redirecting to your authorized {role === "admin" ? "Admin Control Panel" : "Student Dashboard"} for{" "}
                   <strong className="text-emerald-800">{identifier}</strong>...
                 </p>
                 <div className="pt-2">
                   <Link
-                    href={role === "student" ? "/results" : "/resources"}
+                    href={role === "admin" ? "/admin" : "/student"}
                     className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 text-white font-bold text-xs sm:text-sm hover:bg-slate-800 transition"
                   >
-                    <span>Proceed to Dashboard</span>
+                    <span>Proceed Now</span>
                     <ArrowRight className="w-4 h-4" />
                   </Link>
                 </div>
@@ -142,8 +175,8 @@ function LoginForm() {
                 <div className="space-y-1.5">
                   <label className="block text-xs sm:text-sm font-bold text-slate-800 uppercase tracking-wide">
                     {role === "student"
-                      ? "Student Roll / Registration No or Email *"
-                      : "Branch Center Code (e.g. C-0104) *"}
+                      ? "Student Roll / Reg No or Email *"
+                      : "Admin Email or Official ID *"}
                   </label>
                   <div className="relative">
                     <input
@@ -153,8 +186,8 @@ function LoginForm() {
                       onChange={(e) => setIdentifier(e.target.value)}
                       placeholder={
                         role === "student"
-                          ? "e.g., NYD-2026-1042 or name@example.com"
-                          : "e.g., C-0104"
+                          ? "e.g., NYD-2026-1042 or student@example.com"
+                          : "e.g., admin@jubounnayon.com"
                       }
                       className="w-full px-4 py-3.5 rounded-2xl bg-slate-50 border border-slate-300 text-slate-900 font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white text-sm sm:text-base transition"
                     />
@@ -162,7 +195,7 @@ function LoginForm() {
                       {role === "student" ? (
                         <User className="w-4 h-4" />
                       ) : (
-                        <Building2 className="w-4 h-4" />
+                        <Mail className="w-4 h-4" />
                       )}
                     </div>
                   </div>
@@ -172,13 +205,13 @@ function LoginForm() {
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between">
                     <label className="block text-xs sm:text-sm font-bold text-slate-800 uppercase tracking-wide">
-                      Password / Security Key *
+                      Password *
                     </label>
                     <a
                       href="#helpdesk"
                       onClick={(e) => {
                         e.preventDefault();
-                        alert("For password reset, please contact your district branch center with your admit card or student ID.");
+                        alert("For password reset, please contact your central campus helpdesk with your student ID or admin authority token.");
                       }}
                       className="text-xs font-bold text-emerald-700 hover:text-emerald-800 underline"
                     >
@@ -191,13 +224,13 @@ function LoginForm() {
                       required
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Enter your secret password"
+                      placeholder="Enter your security password"
                       className="w-full px-4 py-3.5 rounded-2xl bg-slate-50 border border-slate-300 text-slate-900 font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white text-sm sm:text-base transition"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition"
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition cursor-pointer"
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
@@ -208,15 +241,15 @@ function LoginForm() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full mt-2 py-4 px-6 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm sm:text-base flex items-center justify-center gap-2.5 shadow-lg shadow-emerald-600/25 hover:shadow-xl transition-all disabled:opacity-75"
+                  className="w-full mt-2 py-4 px-6 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm sm:text-base flex items-center justify-center gap-2.5 shadow-lg shadow-emerald-600/25 hover:shadow-xl transition-all disabled:opacity-75 cursor-pointer"
                 >
                   <LogIn className="w-4 h-4" />
                   <span>
                     {isLoading
                       ? "Verifying Credentials..."
                       : role === "student"
-                      ? "Sign In to Trainee Account"
-                      : "Sign In as Branch Authority"}
+                      ? "Sign In to Student Dashboard"
+                      : "Sign In as Central Admin"}
                   </span>
                 </button>
               </form>
@@ -224,12 +257,12 @@ function LoginForm() {
 
             {/* Bottom Register Prompt */}
             <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs sm:text-sm">
-              <span className="text-slate-500">Don't have an account yet?</span>
+              <span className="text-slate-500">New trainee looking to enroll?</span>
               <Link
                 href="/register"
                 className="font-bold text-emerald-700 hover:text-emerald-800 underline flex items-center gap-1"
               >
-                <span>Register as New Trainee or Branch</span>
+                <span>Create Student Account</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
@@ -243,29 +276,29 @@ function LoginForm() {
                 <Sparkles className="w-6 h-6" />
               </div>
               <h3 className="text-xl sm:text-2xl font-black text-white leading-snug">
-                Government Affiliated Digital Services
+                National Youth Development Portal
               </h3>
               <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
-                National Youth Development Technical Platform connects trainees and branch institutions to official verification records.
+                Connecting students, vocational courses, and certified academic records under Saikat Computer & Training Jubo Songhoton.
               </p>
 
               {/* Feature Points */}
               <div className="space-y-3 pt-2 text-xs sm:text-sm text-slate-200">
                 <div className="flex items-start gap-2.5">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <span>Download authenticated digital certificates & admit cards</span>
+                  <span>Interactive student dashboard with enrolled trade modules</span>
                 </div>
                 <div className="flex items-start gap-2.5">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <span>Real-time exam marksheet transcript tracking</span>
+                  <span>Central admin panel for 100% dynamic website control</span>
                 </div>
                 <div className="flex items-start gap-2.5">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <span>Batch scheduling, attendance & practical workstation access</span>
+                  <span>Authentic digital marksheet and certificate generation</span>
                 </div>
                 <div className="flex items-start gap-2.5">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <span>Direct job placement cell & CV assistance</span>
+                  <span>Direct download of exam routines, notices, and toolkits</span>
                 </div>
               </div>
             </div>

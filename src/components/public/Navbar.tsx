@@ -26,6 +26,11 @@ export default function Navbar() {
     return pathname === href || pathname.startsWith(`${href}/`);
   };
 
+  // Dedicated Dashboards have their own specialized shell
+  if (pathname?.startsWith("/admin") || pathname?.startsWith("/student")) {
+    return null;
+  }
+
   return (
     <header className="w-full bg-white border-b border-slate-200/80 sticky top-0 z-50">
       {/* 1440px Extended Width Container */}

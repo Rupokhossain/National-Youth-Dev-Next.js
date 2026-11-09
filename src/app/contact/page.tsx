@@ -14,8 +14,10 @@ import {
   MessageSquare,
   PhoneCall,
 } from "lucide-react";
+import { useInstitute } from "@/context/InstituteContext";
 
 export default function ContactPage() {
+  const { addInquiry } = useInstitute();
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -31,6 +33,14 @@ export default function ContactPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    addInquiry({
+      name: formData.name,
+      phone: formData.phone,
+      email: formData.email,
+      district: formData.district,
+      inquiryType: formData.inquiryType,
+      message: formData.message,
+    });
     setTimeout(() => {
       setIsSubmitting(false);
       setSubmitted(true);
@@ -42,7 +52,7 @@ export default function ContactPage() {
         inquiryType: "Admission & Scholarship",
         message: "",
       });
-    }, 600);
+    }, 500);
   };
 
   const divisionalHubs = [
@@ -93,7 +103,7 @@ export default function ContactPage() {
             <span className="text-emerald-400">Technical Helpdesks</span>
           </h1>
           <p className="text-base sm:text-lg text-slate-300 max-w-3xl mx-auto leading-relaxed font-normal">
-            Reach out for vocational course admissions, transcript authentication, branch center affiliations, or schedule a hands-on campus lab visit.
+            Reach out for vocational course admissions, transcript authentication, certificate verification, or schedule a hands-on campus lab visit.
           </p>
         </div>
       </section>
@@ -279,7 +289,6 @@ export default function ContactPage() {
                   >
                     <option value="Admission & Scholarship">New Admission & Govt. Subsidized Training</option>
                     <option value="Certificate Verification">Certificate Authentication & Marksheet Verification</option>
-                    <option value="Branch Center Affiliation">Branch Center Affiliation & Institutional Licensing</option>
                     <option value="Exam & Results">Examination Routine & Results Inquiries</option>
                     <option value="General Support">General Inquiries / Campus Visit Schedule</option>
                   </select>
